@@ -5,7 +5,7 @@ namespace StreamVerseApi.Controllers
 {
     [ApiController]
     [Route("api/[Controller]")]
-    public class MoviesControllers : ControllerBase
+    public class MoviesController : ControllerBase
     {
         private static readonly List<Movie> _movies = new List<Movie>
         {
@@ -55,9 +55,11 @@ namespace StreamVerseApi.Controllers
 
             public ActionResult<Movie> Create(Movie movie)
             {
-                movie.Id = _movies.Max(m => m.Id) + 1;
-                _movies.Add(movie);
-                return CreatedAtAction(nameof(GetById), new { Id = movie.Id }, movie);
+            movie.Id = _movies.Max(m => m.Id) + 1;
+            movie.Created = DateTime.UtcNow.ToString();
+            movie.Updated = DateTime.UtcNow.ToString();
+            _movies.Add(movie);
+            return CreatedAtAction(nameof(GetById), new { id = movie.Id }, movie);
             }
 
         [HttpPut]
