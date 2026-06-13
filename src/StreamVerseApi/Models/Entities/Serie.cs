@@ -11,5 +11,7 @@
         public string Poster { get; set; }
         public string Created { get; set; }
         public string Updated { get; set; }
+        public int GenreId { get; set; }
+        public Genre Genre { get; set; }
     }
 }
