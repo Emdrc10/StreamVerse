@@ -7,7 +7,7 @@ namespace StreamVerseApi.Controllers
     [Route("api/[Controller]")]
     public class SeriesController : ControllerBase
     {
-        private static rea  donly List<Serie> _serie = new List<Serie>
+        private static readonly List<Serie> _serie = new List<Serie>
         {
             new Serie
             {
@@ -106,6 +106,5 @@ namespace StreamVerseApi.Controllers
             _serie.Remove(serie);
             return NoContent();
         }
-
     }
 }
