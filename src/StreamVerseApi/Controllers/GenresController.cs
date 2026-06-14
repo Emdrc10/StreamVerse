@@ -1,85 +1,90 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using StreamVerseApi.Data;
+using StreamVerseApi.Models.Dtos;
 using StreamVerseApi.Models.Entities;
 
 namespace StreamVerseApi.Controllers
 {
-
     [ApiController]
     [Route("api/[Controller]")]
     public class GenresController : ControllerBase
     {
-        private static readonly List<Genre> _genres = new List<Genre>
-        {
-            new Genre
-            {
-                Id = 1,
-                Name = "Action",
-                Description = "High energy films with physical stunts and combat."
-            },
-            new Genre
-            {
-                Id = 2,
-                Name = "Comedy",
-                Description = "Films designed to entertain and make the audience laugh."
-            },
-            new Genre
-            {
-                Id = 3,
-                Name = "Horror",
-                Description = "Films designed to frighten and unsettle the audience."
-            }
-        };
+        private readonly DataContext _context;
 
-        [HttpGet]
-        public ActionResult<IEnumerable<Genre>> GetAll()
+        public GenresController(DataContext context)
         {
-            return Ok(_genres);
+            _context = context;
         }
 
         [HttpGet]
-        [Route("{id}")]
-        public ActionResult<Genre> GetById(int id)
+        public async Task<ActionResult<IEnumerable<GenreDto>>> GetAll()
         {
-            var genre = _genres.FirstOrDefault(g => g.Id == id);
+            var genres = await _context.Genres
+                .Select(g => new GenreDto
+                {
+                    Id = g.Id,
+                    Name = g.Name,
+                    Description = g.Description
+                })
+                .ToListAsync();
+
+            return Ok(genres);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<GenreDto>> GetById(int id)
+        {
+            var genre = await _context.Genres
+                .Where(g => g.Id == id)
+                .Select(g => new GenreDto
+                {
+                    Id = g.Id,
+                    Name = g.Name,
+                    Description = g.Description
+                })
+                .FirstOrDefaultAsync();
+
             if (genre == null)
             {
                 return NotFound();
             }
+
             return Ok(genre);
         }
 
         [HttpPost]
-        public ActionResult<Genre> Create(Genre genre)
+        public async Task<ActionResult<Genre>> Create(Genre genre)
         {
-            genre.Id = _genres.Max(g => g.Id) + 1;
-            _genres.Add(genre);
+            _context.Genres.Add(genre);
+            await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetById), new { id = genre.Id }, genre);
-        }   
+        }
 
-        [HttpPut]
-        [Route("{id}")]
-        public ActionResult Update(int id, Genre updatedGenre)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Update(int id, Genre updatedGenre)
         {
-            var genre = _genres.FirstOrDefault(g => g.Id == id);
+            var genre = await _context.Genres.FindAsync(id);
             if (genre == null)
             {
                 return NotFound();
             }
             genre.Name = updatedGenre.Name;
             genre.Description = updatedGenre.Description;
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
-        [HttpDelete]
-        [Route("{id}")]
-        public ActionResult Delete(int id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
         {
-            var genre = _genres.FirstOrDefault(g => g.Id == id);
+            var genre = await _context.Genres.FindAsync(id);
             if (genre == null)
             {
                 return NotFound();
             }
-            _genres.Remove(genre);
+            _context.Genres.Remove(genre);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
     }
