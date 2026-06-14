@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using StreamVerseApi.Data;
+using StreamVerseApi.Models.Dtos;
 using StreamVerseApi.Models.Entities;
+
 
 namespace StreamVerseApi.Controllers
 {
@@ -7,89 +11,98 @@ namespace StreamVerseApi.Controllers
     [Route("api/[Controller]")]
     public class MoviesController : ControllerBase
     {
-        private static readonly List<Movie> _movies = new List<Movie>
-        {
-            new Movie
-            {
-                Id = 1,
-                Title = "Avengers: Endgame",
-                Year = 2019,
-                Duration = 181,
-                Synopsis = "The Avengers assemble once more to reverse Thanos's actions.",
-                Poster = "avengers-endgame.jpg",
-                Created = DateTime.UtcNow.ToString(),
-                Updated = DateTime.UtcNow.ToString()
-            },
-            new Movie
-            {
-                Id = 2,
-                Title = "Interstellar",
-                Year = 2014,
-                Duration = 169,
-                Synopsis = "A team of explorers travel through a wormhole in space.",
-                Poster = "interstellar.jpg",
-                Created = DateTime.UtcNow.ToString(),
-                Updated = DateTime.UtcNow.ToString()
-            }
-        };
+        private readonly DataContext _context;
 
-        [HttpGet]
-        public ActionResult<IEnumerable<Movie>> GetAll()
+        public MoviesController(DataContext context)
         {
-            return Ok(_movies);
+            _context = context;
         }
 
         [HttpGet]
-            [Route("{id}")]
-
-            public ActionResult<Movie> GetById(int id)
-            {
-                var movie = _movies.FirstOrDefault(m => m.Id == id);
-                if (movie == null)
+        public async Task<ActionResult<IEnumerable<MovieDto>>> GetAll()
+        {
+            var movies = await _context.Movies
+                .Include(m => m.Genre)
+                .Select(m => new MovieDto
                 {
-                    return NotFound();
-                }
-                return Ok(movie);
-            }
-            [HttpPost]
+                    Id = m.Id,
+                    Title = m.Title,
+                    Year = m.Year,
+                    Duration = m.Duration,
+                    Synopsis = m.Synopsis,
+                    GenreName = m.Genre.Name
+                })
+                .ToListAsync();
 
-            public ActionResult<Movie> Create(Movie movie)
+            return Ok(movies);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<MovieDto>> GetById(int id)
+        {
+            var movie = await _context.Movies
+                .Include(m => m.Genre)
+                .Where(m => m.Id == id)
+                .Select(m => new MovieDto
+                {
+                    Id = m.Id,
+                    Title = m.Title,
+                    Year = m.Year,
+                    Duration = m.Duration,
+                    Synopsis = m.Synopsis,
+                    GenreName = m.Genre.Name
+                })
+                .FirstOrDefaultAsync();
+
+            if (movie == null)
             {
-            movie.Id = _movies.Max(m => m.Id) + 1;
+                return NotFound();
+            }
+
+            return Ok(movie);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Movie>> Create(Movie movie)
+        {
             movie.Created = DateTime.UtcNow.ToString();
             movie.Updated = DateTime.UtcNow.ToString();
-            _movies.Add(movie);
+            _context.Movies.Add(movie);
+            await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetById), new { id = movie.Id }, movie);
-            }
+        }
 
-        [HttpPut]
-            [Route("{id}")]
-            public ActionResult Update(int Id, Movie updateMovie)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Update(int id, Movie updatedMovie)
+        {
+            var movie = await _context.Movies.FindAsync(id);
+            if (movie == null)
             {
-                var movie = _movies.FirstOrDefault(m => m.Id == Id);
-                if (movie == null)
-                {
-                    return NotFound();
-                }
-                movie.Title = updateMovie.Title;
-                movie.Year = updateMovie.Year;
-                movie.Duration = updateMovie.Duration;
-                movie.Synopsis = updateMovie.Synopsis;
-                movie.Poster = updateMovie.Poster;
-                movie.Updated = DateTime.UtcNow.ToString();
-                return NoContent();
+                return NotFound();
             }
-        [HttpDelete]
-            [Route("{id}")]
-            public ActionResult Delete(int Id)
-            { 
-                var movie = _movies.FirstOrDefault(m => m.Id == Id);
-                if (movie == null)
-                {
-                    return NotFound();
-                }
-            _movies.Remove(movie);
+            movie.Title = updatedMovie.Title;
+            movie.Year = updatedMovie.Year;
+            movie.Duration = updatedMovie.Duration;
+            movie.Synopsis = updatedMovie.Synopsis;
+            movie.Poster = updatedMovie.Poster;
+            movie.GenreId = updatedMovie.GenreId;
+            movie.Updated = DateTime.UtcNow.ToString();
+            await _context.SaveChangesAsync();
             return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var movie = await _context.Movies.FindAsync(id);
+            if (movie == null)
+            {
+                return NotFound();
             }
+            _context.Movies.Remove(movie);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }
+
