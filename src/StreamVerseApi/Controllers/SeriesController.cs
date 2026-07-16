@@ -64,10 +64,20 @@ namespace StreamVerseApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Serie>> Create(Serie serie)
+        public async Task<ActionResult<Serie>> Create(CreateSerieDto request)
         {
-            serie.Created = DateTime.UtcNow.ToString();
-            serie.Updated = DateTime.UtcNow.ToString();
+            var serie = new Serie
+            {
+                Title = request.Title,
+                Year = request.Year,
+                Seasons = request.Seasons,
+                Episodes = request.Episodes,
+                Synopsis = request.Synopsis,
+                Poster = request.Poster,
+                GenreId = request.GenreId,
+                Created = DateTime.UtcNow.ToString(),
+                Updated = DateTime.UtcNow.ToString()
+            };
             _context.Series.Add(serie);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetById), new { id = serie.Id }, serie);
