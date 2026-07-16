@@ -63,10 +63,19 @@ namespace StreamVerseApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Movie>> Create(Movie movie)
+        public async Task<ActionResult<Movie>> Create(DTOs.Movies.CreateMovieDto request)
         {
-            movie.Created = DateTime.UtcNow.ToString();
-            movie.Updated = DateTime.UtcNow.ToString();
+            var movie = new Movie   
+            {
+                Title = request.Title,
+                Year = request.Year,
+                Duration = request.Duration,
+                Synopsis = request.Synopsis,
+                Poster = request.Poster,
+                GenreId = request.GenreId,
+                Created = DateTime.UtcNow.ToString(),
+                Updated = DateTime.UtcNow.ToString()
+            };
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetById), new { id = movie.Id }, movie);

@@ -54,8 +54,13 @@ namespace StreamVerseApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Genre>> Create(Genre genre)
+        public async Task<ActionResult<Genre>> Create(CreateGenreDto request)
         {
+            var genre = new Genre
+            {
+                Name = request.Name,
+                Description = request.Description
+            };
             _context.Genres.Add(genre);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetById), new { id = genre.Id }, genre);
