@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using StreamVerse.Domain.Entities;
 using StreamVerseApi.Data;
+using StreamVerseApi.DTOs.Movies;
+using StreamVerseApi.Models;
 using StreamVerseApi.Models.Dtos;
 
 
@@ -9,19 +11,14 @@ namespace StreamVerseApi.Controllers
 {
     [ApiController]
     [Route("api/[Controller]")]
-    public class MoviesController : ControllerBase
+    public class MoviesController : BaseController
     {
-        private readonly DataContext _context;
-
-        public MoviesController(DataContext context)
-        {
-            _context = context;
-        }
+        public MoviesController(DataContext context) : base(context) { }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MovieDto>>> GetAll()
+        public async Task<ApiResponse<IEnumerable<MovieDto>>> GetAll()
         {
-            var movies = await _context.Movies
+            var movies = await Context.Movies
                 .Include(m => m.Genre)
                 .Select(m => new MovieDto
                 {
@@ -34,13 +31,13 @@ namespace StreamVerseApi.Controllers
                 })
                 .ToListAsync();
 
-            return Ok(movies);
+            return ApiResponse<IEnumerable<MovieDto>>.SuccessResponse(movies);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<MovieDto>> GetById(int id)
+        public async Task<ApiResponse<MovieDto>> GetById(int id)
         {
-            var movie = await _context.Movies
+            var movie = await Context.Movies
                 .Include(m => m.Genre)
                 .Where(m => m.Id == id)
                 .Select(m => new MovieDto
@@ -56,16 +53,16 @@ namespace StreamVerseApi.Controllers
 
             if (movie == null)
             {
-                return NotFound();
+                return ApiResponse<MovieDto>.FailureResponse("Movie not found", 404);
             }
 
-            return Ok(movie);
+            return ApiResponse<MovieDto>.SuccessResponse(movie);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Movie>> Create(DTOs.Movies.CreateMovieDto request)
+        public async Task<ApiResponse<Movie>> Create(CreateMovieDto request)
         {
-            var movie = new Movie   
+            var movie = new Movie
             {
                 Title = request.Title,
                 Year = request.Year,
@@ -76,15 +73,15 @@ namespace StreamVerseApi.Controllers
                 Created = DateTime.UtcNow.ToString(),
                 Updated = DateTime.UtcNow.ToString()
             };
-            _context.Movies.Add(movie);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = movie.Id }, movie);
+            Context.Movies.Add(movie);
+            await Context.SaveChangesAsync();
+            return ApiResponse<Movie>.SuccessResponse(movie, 201);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult> Update(int id, Movie updatedMovie)
         {
-            var movie = await _context.Movies.FindAsync(id);
+            var movie = await Context.Movies.FindAsync(id);
             if (movie == null)
             {
                 return NotFound();
@@ -96,20 +93,20 @@ namespace StreamVerseApi.Controllers
             movie.Poster = updatedMovie.Poster;
             movie.GenreId = updatedMovie.GenreId;
             movie.Updated = DateTime.UtcNow.ToString();
-            await _context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
             return NoContent();
-        }
+        }   
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var movie = await _context.Movies.FindAsync(id);
+            var movie = await Context.Movies.FindAsync(id);
             if (movie == null)
             {
                 return NotFound();
             }
-            _context.Movies.Remove(movie);
-            await _context.SaveChangesAsync();
+            Context.Movies.Remove(movie);
+            await Context.SaveChangesAsync();
             return NoContent();
         }
     }
