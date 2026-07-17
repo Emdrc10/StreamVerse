@@ -1,8 +1,9 @@
-﻿namespace StreamVerseApi.Models.Entities;
+﻿using StreamVerse.Domain.Core;
 
-public class Movie
+namespace StreamVerse.Domain.Entities;
+
+public class Movie : BaseEntity
 {
-    public int Id { get; set; }
     public string Title { get; set; } 
     public int Year { get; set; }
     public int Duration { get; set; }

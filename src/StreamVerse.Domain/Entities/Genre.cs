@@ -1,6 +1,8 @@
-﻿namespace StreamVerseApi.Models.Entities
+﻿using StreamVerse.Domain.Core;
+
+namespace StreamVerse.Domain.Entities
 {
-    public class Genre
+    public class Genre : BaseEntity
     {
         public int Id { get; set; }
         public string Name { get; set; }
