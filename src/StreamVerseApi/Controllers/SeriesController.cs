@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StreamVerseApi.Data;
+using StreamVerseApi.Models;
 using StreamVerseApi.Models.Dtos;
 using StreamVerseApi.Models.Entities;
 
@@ -8,19 +9,14 @@ namespace StreamVerseApi.Controllers
 {
     [ApiController]
     [Route("api/[Controller]")]
-    public class SerieController : ControllerBase
+    public class SerieController : BaseController
     {
-        private readonly DataContext _context;
-
-        public SerieController(DataContext context)
-        {
-            _context = context;
-        }
+        public SerieController(DataContext context) : base(context) { }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SerieDto>>> GetAll()
+        public async Task<ApiResponse<IEnumerable<SerieDto>>> GetAll()
         {
-            var series = await _context.Series
+            var series = await Context.Series
                 .Include(s => s.Genre)
                 .Select(s => new SerieDto
                 {
@@ -34,13 +30,13 @@ namespace StreamVerseApi.Controllers
                 })
                 .ToListAsync();
 
-            return Ok(series);
+            return ApiResponse<IEnumerable<SerieDto>>.SuccessResponse(series);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<SerieDto>> GetById(int id)
+        public async Task<ApiResponse<SerieDto>> GetById(int id)
         {
-            var serie = await _context.Series
+            var serie = await Context.Series
                 .Include(s => s.Genre)
                 .Where(s => s.Id == id)
                 .Select(s => new SerieDto
@@ -57,14 +53,14 @@ namespace StreamVerseApi.Controllers
 
             if (serie == null)
             {
-                return NotFound();
+                return ApiResponse<SerieDto>.FailureResponse("Serie not found", 404);
             }
 
-            return Ok(serie);
+            return ApiResponse<SerieDto>.SuccessResponse(serie);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Serie>> Create(CreateSerieDto request)
+        public async Task<ApiResponse<Serie>> Create(CreateSerieDto request)
         {
             var serie = new Serie
             {
@@ -78,15 +74,15 @@ namespace StreamVerseApi.Controllers
                 Created = DateTime.UtcNow.ToString(),
                 Updated = DateTime.UtcNow.ToString()
             };
-            _context.Series.Add(serie);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = serie.Id }, serie);
+            Context.Series.Add(serie);
+            await Context.SaveChangesAsync();
+            return ApiResponse<Serie>.SuccessResponse(serie, 201);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult> Update(int id, Serie updatedSerie)
         {
-            var serie = await _context.Series.FindAsync(id);
+            var serie = await Context.Series.FindAsync(id);
             if (serie == null)
             {
                 return NotFound();
@@ -99,20 +95,20 @@ namespace StreamVerseApi.Controllers
             serie.Poster = updatedSerie.Poster;
             serie.GenreId = updatedSerie.GenreId;
             serie.Updated = DateTime.UtcNow.ToString();
-            await _context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var serie = await _context.Series.FindAsync(id);
+            var serie = await Context.Series.FindAsync(id);
             if (serie == null)
             {
                 return NotFound();
             }
-            _context.Series.Remove(serie);
-            await _context.SaveChangesAsync();
+            Context.Series.Remove(serie);
+            await Context.SaveChangesAsync();
             return NoContent();
         }
     }
