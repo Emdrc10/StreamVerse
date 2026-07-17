@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using StreamVerse.Domain.Entities;
 using StreamVerseApi.Data;
 using StreamVerseApi.DTOs.Movies;
 using StreamVerseApi.Models;
 using StreamVerseApi.Models.Dtos;
-using StreamVerseApi.Models.Entities;
 
 
 namespace StreamVerseApi.Controllers

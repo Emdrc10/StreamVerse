@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StreamVerseApi.Models.Entities;
+using StreamVerse.Domain.Entities;
 
 namespace StreamVerseApi.Data
 {
