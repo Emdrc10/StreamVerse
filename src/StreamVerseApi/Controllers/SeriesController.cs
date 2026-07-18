@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StreamVerse.Domain.Entities;
-using StreamVerseApi.Data;
+using StreamVerse.Infraestructure.Repositories;
+using StreamVerse.Infraestructure;
 using StreamVerseApi.Models;
 using StreamVerseApi.Models.Dtos;
 
@@ -11,52 +12,47 @@ namespace StreamVerseApi.Controllers
     [Route("api/[Controller]")]
     public class SerieController : BaseController
     {
-        public SerieController(DataContext context) : base(context) { }
+        private readonly UnitOfWork _unitOfWork;
 
+        public SerieController(UnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
         [HttpGet]
         public async Task<ApiResponse<IEnumerable<SerieDto>>> GetAll()
         {
-            var series = await Context.Series
-                .Include(s => s.Genre)
-                .Select(s => new SerieDto
-                {
-                    Id = s.Id,
-                    Title = s.Title,
-                    Year = s.Year,
-                    Seasons = s.Seasons,
-                    Episodes = s.Episodes,
-                    Synopsis = s.Synopsis,
-                    GenreName = s.Genre.Name
-                })
-                .ToListAsync();
-
-            return ApiResponse<IEnumerable<SerieDto>>.SuccessResponse(series);
+            var series = await _unitOfWork.Serie.GetAllAsync();
+            var result = series.Select(s => new SerieDto
+            {
+                Id = s.Id,
+                Title = s.Title,
+                Year = s.Year,
+                Seasons = s.Seasons,
+                Episodes = s.Episodes,
+                Synopsis = s.Synopsis,
+                GenreName = s.Genre.Name
+            });
+            return ApiResponse<IEnumerable<SerieDto>>.SuccessResponse(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ApiResponse<SerieDto>> GetById(int id)
         {
-            var serie = await Context.Series
-                .Include(s => s.Genre)
-                .Where(s => s.Id == id)
-                .Select(s => new SerieDto
-                {
-                    Id = s.Id,
-                    Title = s.Title,
-                    Year = s.Year,
-                    Seasons = s.Seasons,
-                    Episodes = s.Episodes,
-                    Synopsis = s.Synopsis,
-                    GenreName = s.Genre.Name
-                })
-                .FirstOrDefaultAsync();
-
+            var serie = await _unitOfWork.Serie.GetByIdAsync(id);
             if (serie == null)
             {
                 return ApiResponse<SerieDto>.FailureResponse("Serie not found", 404);
             }
-
-            return ApiResponse<SerieDto>.SuccessResponse(serie);
+            return ApiResponse<SerieDto>.SuccessResponse(new SerieDto
+            {
+                Id = serie.Id,
+                Title = serie.Title,
+                Year = serie.Year,
+                Seasons = serie.Seasons,
+                Episodes = serie.Episodes,
+                Synopsis = serie.Synopsis,
+                GenreName = serie.Genre.Name
+            });
         }
 
         [HttpPost]
@@ -74,41 +70,24 @@ namespace StreamVerseApi.Controllers
                 Created = DateTime.UtcNow.ToString(),
                 Updated = DateTime.UtcNow.ToString()
             };
-            Context.Series.Add(serie);
-            await Context.SaveChangesAsync();
+            await _unitOfWork.Serie.CreateAsync(serie);
+            _unitOfWork.complete();
             return ApiResponse<Serie>.SuccessResponse(serie, 201);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult> Update(int id, Serie updatedSerie)
         {
-            var serie = await Context.Series.FindAsync(id);
-            if (serie == null)
-            {
-                return NotFound();
-            }
-            serie.Title = updatedSerie.Title;
-            serie.Year = updatedSerie.Year;
-            serie.Seasons = updatedSerie.Seasons;
-            serie.Episodes = updatedSerie.Episodes;
-            serie.Synopsis = updatedSerie.Synopsis;
-            serie.Poster = updatedSerie.Poster;
-            serie.GenreId = updatedSerie.GenreId;
-            serie.Updated = DateTime.UtcNow.ToString();
-            await Context.SaveChangesAsync();
+            await _unitOfWork.Serie.UpdateAsync(id, updatedSerie);
+            _unitOfWork.complete();
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var serie = await Context.Series.FindAsync(id);
-            if (serie == null)
-            {
-                return NotFound();
-            }
-            Context.Series.Remove(serie);
-            await Context.SaveChangesAsync();
+            await _unitOfWork.Serie.DeleteAsync(id);
+            _unitOfWork.complete();
             return NoContent();
         }
     }

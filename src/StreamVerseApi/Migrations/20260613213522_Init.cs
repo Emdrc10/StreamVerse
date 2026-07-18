@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
+using StreamVerse.Infraestructure;
+
+
 
 #nullable disable
 

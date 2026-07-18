@@ -1,52 +1,47 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using StreamVerse.Domain.Entities;
-using StreamVerseApi.Data;
+using StreamVerse.Infraestructure.Repositories;
 using StreamVerseApi.Models;
 using StreamVerseApi.Models.Dtos;
 
 namespace StreamVerseApi.Controllers
 {
-    [ApiController]
-    [Route("api/[Controller]")]
     public class GenresController : BaseController
     {
-        public GenresController(DataContext context) : base(context) { }
+        private readonly UnitOfWork _unitOfWork;
+
+        public GenresController(UnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
 
         [HttpGet]
         public async Task<ApiResponse<IEnumerable<GenreDto>>> GetAll()
         {
-            var genres = await Context.Genres
-                .Select(g => new GenreDto
-                {
-                    Id = g.Id,
-                    Name = g.Name,
-                    Description = g.Description
-                })
-                .ToListAsync();
-
-            return ApiResponse<IEnumerable<GenreDto>>.SuccessResponse(genres);
+            var genres = await _unitOfWork.Genre.GetAllAsync();
+            var result = genres.Select(g => new GenreDto
+            {
+                Id = g.Id,
+                Name = g.Name,
+                Description = g.Description
+            });
+            return ApiResponse<IEnumerable<GenreDto>>.SuccessResponse(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ApiResponse<GenreDto>> GetById(int id)
         {
-            var genre = await Context.Genres
-                .Where(g => g.Id == id)
-                .Select(g => new GenreDto
-                {
-                    Id = g.Id,
-                    Name = g.Name,
-                    Description = g.Description
-                })
-                .FirstOrDefaultAsync();
-
+            var genre = await _unitOfWork.Genre.GetByIdAsync(id);
             if (genre == null)
             {
                 return ApiResponse<GenreDto>.FailureResponse("Genre not found", 404);
             }
-
-            return ApiResponse<GenreDto>.SuccessResponse(genre);
+            return ApiResponse<GenreDto>.SuccessResponse(new GenreDto
+            {
+                Id = genre.Id,
+                Name = genre.Name,
+                Description = genre.Description
+            });
         }
 
         [HttpPost]
@@ -57,35 +52,24 @@ namespace StreamVerseApi.Controllers
                 Name = request.Name,
                 Description = request.Description
             };
-            Context.Genres.Add(genre);
-            await Context.SaveChangesAsync();
+            await _unitOfWork.Genre.CreateAsync(genre);
+            _unitOfWork.complete();
             return ApiResponse<Genre>.SuccessResponse(genre, 201);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult> Update(int id, Genre updatedGenre)
         {
-            var genre = await Context.Genres.FindAsync(id);
-            if (genre == null)
-            {
-                return NotFound();
-            }
-            genre.Name = updatedGenre.Name;
-            genre.Description = updatedGenre.Description;
-            await Context.SaveChangesAsync();
+            await _unitOfWork.Genre.UpdateAsync(id, updatedGenre);
+            _unitOfWork.complete();
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var genre = await Context.Genres.FindAsync(id);
-            if (genre == null)
-            {
-                return NotFound();
-            }
-            Context.Genres.Remove(genre);
-            await Context.SaveChangesAsync();
+            await _unitOfWork.Genre.DeleteAsync(id);
+            _unitOfWork.complete();
             return NoContent();
         }
     }
