@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StreamVerse.Application.Services;
 using StreamVerse.Domain.Entities;
 using StreamVerse.Infraestructure.Repositories;
 using StreamVerseApi.Models;
@@ -9,10 +10,12 @@ namespace StreamVerseApi.Controllers
     public class GenresController : BaseController
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly GenreService _genreService;
 
-        public GenresController(UnitOfWork unitOfWork)
+        public GenresController(UnitOfWork unitOfWork, GenreService genreService)
         {
-            _unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;   
+            _genreService = genreService;
         }
 
         [HttpGet]

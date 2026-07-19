@@ -22,13 +22,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\StreamVerse.Domain\StreamVerse.Domain.csproj" />
-    <ProjectReference Include="..\StreamVerse.Infraestructure\StreamVerse.Infraestructure.csproj" />
+    <Folder Include="Data\" />
+    <Folder Include="Models\Responses\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\" />
-    <Folder Include="Models\Responses\" />
+    <ProjectReference Include="..\StreamVerse.Aplication\StreamVerse.Aplication.csproj" />
   </ItemGroup>
 
 </Project>
