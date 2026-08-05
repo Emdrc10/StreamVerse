@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StreamVerseApi.Data;
+using StreamVerse.Infraestructure;
+
 
 namespace StreamVerseApi.Controllers
 {
@@ -7,11 +8,6 @@ namespace StreamVerseApi.Controllers
     [Route("api/[controller]")]
     public abstract class BaseController : ControllerBase
     {
-        public readonly DataContext Context;
-
-        public BaseController(DataContext dataContext) 
-        {
-            Context  = dataContext;
-        }
+        public BaseController() { }
     }
 }
