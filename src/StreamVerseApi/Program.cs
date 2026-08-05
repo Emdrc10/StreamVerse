@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using StreamVerse.Application.Services;
 using StreamVerse.Infraestructure;
 using StreamVerse.Infraestructure.Repositories;
 
@@ -30,6 +31,11 @@ internal class Program
         builder.Services.AddScoped<SerieRepository>();
         builder.Services.AddScoped<UserRepository>();
         builder.Services.AddScoped<UnitOfWork>();
+
+        builder.Services.AddScoped<GenreService>();
+        builder.Services.AddScoped<MovieService>();
+        builder.Services.AddScoped<SerieService>();
+        builder.Services.AddScoped<UserService>();
 
 
         var app = builder.Build();

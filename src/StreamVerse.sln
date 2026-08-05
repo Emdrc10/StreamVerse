@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamVerse.Domain", "Strea
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamVerse.Infraestructure", "StreamVerse.Infraestructure\StreamVerse.Infraestructure.csproj", "{C94D0965-0871-4963-9365-E0DC3C8EAEB4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Business", "Business", "{2BE50D41-33E5-4007-984D-003DD7F882BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamVerse.Aplication", "StreamVerse.Aplication\StreamVerse.Aplication.csproj", "{97F6D808-A491-414B-BAC2-A766702A6F13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +33,10 @@ Global
 		{C94D0965-0871-4963-9365-E0DC3C8EAEB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C94D0965-0871-4963-9365-E0DC3C8EAEB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C94D0965-0871-4963-9365-E0DC3C8EAEB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97F6D808-A491-414B-BAC2-A766702A6F13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97F6D808-A491-414B-BAC2-A766702A6F13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97F6D808-A491-414B-BAC2-A766702A6F13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97F6D808-A491-414B-BAC2-A766702A6F13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -36,6 +44,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{22F3CAF9-A789-496F-8272-0439D3F9349F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{C94D0965-0871-4963-9365-E0DC3C8EAEB4} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{97F6D808-A491-414B-BAC2-A766702A6F13} = {2BE50D41-33E5-4007-984D-003DD7F882BB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8DD6563E-09E1-41DC-BA47-B9B34BFC32E0}

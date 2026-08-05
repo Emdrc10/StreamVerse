@@ -1,4 +1,4 @@
-﻿namespace StreamVerseApi.Models
+﻿namespace StreamVerse.Aplication.Models.Responses
 {
     public class ApiResponse<T>
     {
