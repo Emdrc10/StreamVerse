@@ -1,5 +1,7 @@
-﻿using StreamVerse.Domain.Entities;
+﻿using StreamVerse.Aplication.Models.Responses;
+using StreamVerse.Domain.Entities;
 using StreamVerse.Infraestructure.Repositories;
+using StreamVerse.Aplication.Models.Dtos;
 
 namespace StreamVerse.Application.Services
 {
@@ -12,21 +14,41 @@ namespace StreamVerse.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<Genre>> GetAllAsync()
+        public async Task<ApiResponse<IEnumerable<GenreDto>>> GetAllAsync()
         {
-            return await _unitOfWork.Genre.GetAllAsync();
+            var genres = await _unitOfWork.Genre.GetAllAsync();
+            var result = genres.Select(g => new GenreDto
+            {
+                Id = g.Id,
+                Name = g.Name,
+                Description = g.Description
+            });
+            return ApiResponse<IEnumerable<GenreDto>>.SuccessResponse(result);
         }
 
-        public async Task<Genre?> GetByIdAsync(int id)
+        public async Task<ApiResponse<GenreDto>> GetByIdAsync(int id)
         {
-            return await _unitOfWork.Genre.GetByIdAsync(id);
+            var genre = await _unitOfWork.Genre.GetByIdAsync(id);
+            if (genre == null)
+                return ApiResponse<GenreDto>.FailureResponse("Genre not found", 404);
+            return ApiResponse<GenreDto>.SuccessResponse(new GenreDto
+            {
+                Id = genre.Id,
+                Name = genre.Name,
+                Description = genre.Description
+            });
         }
 
-        public async Task<Genre> CreateAsync(Genre genre)
+        public async Task<ApiResponse<Genre>> CreateAsync(CreateGenreDto request)
         {
+            var genre = new Genre
+            {
+                Name = request.Name,
+                Description = request.Description
+            };
             await _unitOfWork.Genre.CreateAsync(genre);
             _unitOfWork.complete();
-            return genre;
+            return ApiResponse<Genre>.SuccessResponse(genre, 201);
         }
 
         public async Task UpdateAsync(int id, Genre updatedGenre)

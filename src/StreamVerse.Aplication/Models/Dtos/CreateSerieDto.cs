@@ -1,4 +1,4 @@
-﻿namespace StreamVerseApi.Models.Dtos
+﻿namespace StreamVerse.Aplication.Models.Dtos
 {
     public class CreateSerieDto
     {

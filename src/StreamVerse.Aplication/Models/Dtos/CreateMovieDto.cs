@@ -1,4 +1,4 @@
-﻿namespace StreamVerseApi.DTOs.Movies
+﻿namespace StreamVerse.Aplication.Models.Dtos
 {
     public class CreateMovieDto
     {
