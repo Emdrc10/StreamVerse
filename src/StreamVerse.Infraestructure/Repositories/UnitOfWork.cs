@@ -9,7 +9,8 @@
            SerieRepository serie,
            GenreRepository genre,
            UserRepository user,
-           RatingRepository rating)
+           RatingRepository rating,
+           FavoriteRepository favorite)
         {
             _context = context;
             Movie = movie;
@@ -17,6 +18,7 @@
             Genre = genre;
             User = user;
             Rating = rating;
+            Favorite = favorite;
         }
 
         public MovieRepository Movie { get; private set; }
@@ -26,6 +28,7 @@
         public UserRepository User { get; private set; }
 
         public RatingRepository Rating { get; private set; }
+        public FavoriteRepository Favorite { get; private set; }
 
         public void complete()
         {

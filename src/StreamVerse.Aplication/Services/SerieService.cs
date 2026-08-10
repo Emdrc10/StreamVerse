@@ -77,5 +77,28 @@ namespace StreamVerse.Application.Services
             await _unitOfWork.Serie.DeleteAsync(id);
             _unitOfWork.complete();
         }
+        public async Task<ApiResponse<IEnumerable<SerieDto>>> SearchAsync(string? title, int? genreId)
+        {
+            var query = await _unitOfWork.Serie.GetAllAsync();
+
+            if (!string.IsNullOrEmpty(title))
+                query = query.Where(s => s.Title.Contains(title, StringComparison.OrdinalIgnoreCase));
+
+            if (genreId.HasValue)
+                query = query.Where(s => s.GenreId == genreId);
+
+            var result = query.Select(s => new SerieDto
+            {
+                Id = s.Id,
+                Title = s.Title,
+                Year = s.Year,
+                Seasons = s.Seasons,
+                Episodes = s.Episodes,
+                Synopsis = s.Synopsis,
+                GenreName = s.Genre?.Name
+            });
+
+            return ApiResponse<IEnumerable<SerieDto>>.SuccessResponse(result);
+        }
     }
 }

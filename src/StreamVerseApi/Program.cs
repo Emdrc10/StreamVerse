@@ -31,13 +31,16 @@ internal class Program
         builder.Services.AddScoped<MovieRepository>();
         builder.Services.AddScoped<SerieRepository>();
         builder.Services.AddScoped<UserRepository>();
+        builder.Services.AddScoped<FavoriteRepository>();
         builder.Services.AddScoped<RatingRepository>();
         builder.Services.AddScoped<UnitOfWork>();
+
 
         builder.Services.AddScoped<GenreService>();
         builder.Services.AddScoped<MovieService>();
         builder.Services.AddScoped<SerieService>();
         builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<FavoriteService>();
         builder.Services.AddScoped<RatingService>();    
 
 
