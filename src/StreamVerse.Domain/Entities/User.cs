@@ -6,7 +6,9 @@ namespace StreamVerse.Domain.Entities
     {
         public string Name { get; set; }
         public string Email { get; set; }
-        public string Created { get; set; }
-        public string Updated { get; set; }
+        public string? Password { get; set; }
+        public string? Role { get; set; }
+        public string? Created { get; set; }
+        public string? Updated { get; set; }
     }
 }
