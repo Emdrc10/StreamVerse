@@ -45,6 +45,10 @@ namespace StreamVerseApi.Controllers
             await _movieService.DeleteAsync(id);
             return NoContent();
         }
+
+        [HttpGet("search")]
+        public async Task<ApiResponse<IEnumerable<MovieDto>>> Search([FromQuery] string? title, [FromQuery] int? genreId)
+        => await _movieService.SearchAsync(title, genreId);
     }
 }
 
