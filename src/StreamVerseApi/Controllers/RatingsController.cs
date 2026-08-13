@@ -22,8 +22,8 @@ public class RatingsController : BaseController
     public async Task<ApiResponse<RatingDto>> GetById(int id)
         => await _ratingService.GetByIdAsync(id);
 
-[HttpPost]
-public async Task<ApiResponse<RatingDto>> Create(CreateRatingDto request)
+    [HttpPost]
+    public async Task<ApiResponse<RatingDto>> Create(CreateRatingDto request)
     => await _ratingService.CreateAsync(request);
 
     [HttpPut("{id}")]
