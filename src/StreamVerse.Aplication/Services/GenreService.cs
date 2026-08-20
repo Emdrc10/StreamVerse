@@ -43,24 +43,30 @@ namespace StreamVerse.Application.Services
         {
             var genre = new Genre
             {
-                Name = request.Name,
-                Description = request.Description
+                Name = request.Name ?? "",
+                Description = request.Description ?? ""
             };
             await _unitOfWork.Genre.CreateAsync(genre);
             _unitOfWork.complete();
             return ApiResponse<Genre>.SuccessResponse(genre, 201);
         }
 
-        public async Task UpdateAsync(int id, Genre updatedGenre)
+        public async Task UpdateAsync(int id, CreateGenreDto request)
         {
-            await _unitOfWork.Genre.UpdateAsync(id, updatedGenre);
+            var genre = new Genre
+            {
+                Name = request.Name ?? "",
+                Description = request.Description ?? ""
+            };
+            await _unitOfWork.Genre.UpdateAsync(id, genre);
             _unitOfWork.complete();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            await _unitOfWork.Genre.DeleteAsync(id);
+            var deleted = await _unitOfWork.Genre.DeleteAsync(id);
             _unitOfWork.complete();
+            return deleted;
         }
     }
 }

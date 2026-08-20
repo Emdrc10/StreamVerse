@@ -66,7 +66,7 @@ function App() {
       {page === 'movies' && <Movies movies={movies} genres={genres} onRefresh={loadData} />}
       {page === 'series' && <Series series={series} genres={genres} onRefresh={loadData} />}
       {page === 'genres' && <Genres genres={genres} onRefresh={loadData} />}
-      {page === 'reviews' && <Reviews ratings={ratings} />}
+      {page === 'reviews' && <Reviews ratings={ratings} onRefresh={loadData} />}
       {page === 'favorites' && <Favorites favorites={favorites} onRefresh={loadData} />}
     </div>
   )

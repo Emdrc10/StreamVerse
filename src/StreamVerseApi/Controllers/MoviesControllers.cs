@@ -33,7 +33,7 @@ namespace StreamVerseApi.Controllers
             => await _movieService.CreateAsync(request);
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, Movie updatedMovie)
+        public async Task<ActionResult> Update(int id, CreateMovieDto updatedMovie)
         {
             await _movieService.UpdateAsync(id, updatedMovie);
             return NoContent();

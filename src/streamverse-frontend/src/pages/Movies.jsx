@@ -10,18 +10,31 @@ function Movies({ movies, genres, onRefresh }) {
   const filtered = movies.filter(m => m.title.toLowerCase().includes(search.toLowerCase()))
 
   const handleSave = async () => {
+    if (!form.title || !form.genreId) {
+      alert('Título y género son obligatorios')
+      return
+    }
     try {
+      const data = {
+        title: form.title,
+        year: Number(form.year) || 0,
+        duration: Number(form.duration) || 0,
+        synopsis: form.synopsis || '',
+        poster: form.poster || '',
+        genreId: Number(form.genreId)
+      }
+
       if (editing) {
-        await moviesApi.update(editing.id, form)
+        await moviesApi.update(editing.id, data)
       } else {
-        await moviesApi.create(form)
+        await moviesApi.create(data)
       }
       setForm({})
       setEditing(null)
       setShowForm(false)
       onRefresh()
     } catch (error) {
-      alert('Error: ' + error.message)
+      alert('Error: ' + JSON.stringify(error.response?.data || error.message))
     }
   }
 
@@ -31,7 +44,7 @@ function Movies({ movies, genres, onRefresh }) {
         await moviesApi.delete(id)
         onRefresh()
       } catch (error) {
-        alert('Error: ' + error.message)
+        alert('Error: ' + JSON.stringify(error.response?.data || error.message))
       }
     }
   }
@@ -45,7 +58,7 @@ function Movies({ movies, genres, onRefresh }) {
   return (
     <main style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h2>🎬 Películas</h2>
+        <h2>Películas</h2>
         <button onClick={() => { setShowForm(!showForm); setForm({}); setEditing(null) }}
           style={{ background: '#3b82f6', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>
           {showForm ? 'Cancelar' : '+ Agregar'}
@@ -95,7 +108,7 @@ function Movies({ movies, genres, onRefresh }) {
                 <img src={movie.poster} alt={movie.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display = 'none'} />
               ) : null}
               {!movie.poster ? (
-                <div style={{ fontSize: '50px' }}>🎬</div>
+                <div style={{ fontSize: '50px' }}></div>
               ) : null}
             </div>
             <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '4px' }}>{movie.title}</div>

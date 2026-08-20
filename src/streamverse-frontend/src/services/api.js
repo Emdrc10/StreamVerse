@@ -34,5 +34,7 @@ export const favoritesApi = {
 
 export const ratingsApi = {
   getAll: () => axios.get(`${API}/Ratings`),
-  create: (userId, movieId, serieId, score) => axios.post(`${API}/Ratings`, { userId, movieId, serieId, score, review: '' })
+  create: (userId, movieId, serieId, score, review = '') =>
+    axios.post(`${API}/Ratings`, { userId, movieId, serieId, score, review }),
+  delete: (id) => axios.delete(`${API}/Ratings/${id}`)
 }

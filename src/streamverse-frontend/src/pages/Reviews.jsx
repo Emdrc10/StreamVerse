@@ -1,11 +1,23 @@
-function Reviews({ ratings }) {
+import { ratingsApi } from '../services/api'
+
+function Reviews({ ratings, onRefresh }) {
+  const handleDelete = async (id) => {
+    if (confirm('¿Eliminar reseña?')) {
+      try {
+        await ratingsApi.delete(id)
+        onRefresh()
+      } catch (error) {
+        alert('Error: ' + JSON.stringify(error.response?.data || error.message))
+      }
+    }
+  }
+
   return (
     <main style={{ padding: '32px', maxWidth: '1000px', margin: '0 auto' }}>
-      <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '24px' }}>⭐ Todas las Reseñas</h2>
+      <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '24px' }}>Todas las Reseñas</h2>
 
       {!ratings || ratings.length === 0 ? (
         <div style={{ textAlign: 'center', color: '#888', padding: '60px 0' }}>
-          <div style={{ fontSize: '48px', marginBottom: '12px' }}>📝</div>
           <p>No hay reseñas aún</p>
         </div>
       ) : (
@@ -34,8 +46,14 @@ function Reviews({ ratings }) {
                   </div>
                 )}
 
-                <div style={{ fontSize: '12px', color: '#666' }}>
-                  {r.movieTitle ? '🎬 Película' : '📺 Serie'}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontSize: '12px', color: '#666' }}>
+                    {r.movieTitle ? 'Película' : 'Serie'}
+                  </div>
+                  <button onClick={() => handleDelete(r.id)}
+                    style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>
+                    Borrar
+                  </button>
                 </div>
               </div>
             ))}

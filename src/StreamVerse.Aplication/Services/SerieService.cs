@@ -26,7 +26,9 @@ namespace StreamVerse.Application.Services
                 Seasons = s.Seasons,
                 Episodes = s.Episodes,
                 Synopsis = s.Synopsis,
-                GenreName = s.Genre.Name
+                Poster = s.Poster,
+                GenreId = s.GenreId,
+                GenreName = s.Genre != null ? s.Genre.Name : ""
             });
             return ApiResponse<IEnumerable<SerieDto>>.SuccessResponse(result);
         }
@@ -44,19 +46,21 @@ namespace StreamVerse.Application.Services
                 Seasons = serie.Seasons,
                 Episodes = serie.Episodes,
                 Synopsis = serie.Synopsis,
-                GenreName = serie.Genre.Name
+                Poster = serie.Poster,
+                GenreId = serie.GenreId,
+                GenreName = serie.Genre != null ? serie.Genre.Name : ""
             });
         }
         public async Task<ApiResponse<Serie>> CreateAsync(CreateSerieDto request)
         {
             var serie = new Serie
             {
-                Title = request.Title,
+                Title = request.Title ?? "",
                 Year = request.Year,
                 Seasons = request.Seasons,
                 Episodes = request.Episodes,
-                Synopsis = request.Synopsis,
-                Poster = request.Poster,
+                Synopsis = request.Synopsis ?? "",
+                Poster = request.Poster ?? "",
                 GenreId = request.GenreId,
                 Created = DateTime.UtcNow.ToString(),
                 Updated = DateTime.UtcNow.ToString()
@@ -66,9 +70,19 @@ namespace StreamVerse.Application.Services
             return ApiResponse<Serie>.SuccessResponse(serie, 201);
         }
 
-        public async Task UpdateAsync(int id, Serie updatedSerie)
+        public async Task UpdateAsync(int id, CreateSerieDto request)
         {
-            await _unitOfWork.Serie.UpdateAsync(id, updatedSerie);
+            var serie = new Serie
+            {
+                Title = request.Title ?? "",
+                Year = request.Year,
+                Seasons = request.Seasons,
+                Episodes = request.Episodes,
+                Synopsis = request.Synopsis ?? "",
+                Poster = request.Poster ?? "",
+                GenreId = request.GenreId
+            };
+            await _unitOfWork.Serie.UpdateAsync(id, serie);
             _unitOfWork.complete();
         }
 
@@ -95,7 +109,9 @@ namespace StreamVerse.Application.Services
                 Seasons = s.Seasons,
                 Episodes = s.Episodes,
                 Synopsis = s.Synopsis,
-                GenreName = s.Genre?.Name
+                Poster = s.Poster,
+                GenreId = s.GenreId,
+                GenreName = s.Genre != null ? s.Genre.Name : ""
             });
 
             return ApiResponse<IEnumerable<SerieDto>>.SuccessResponse(result);

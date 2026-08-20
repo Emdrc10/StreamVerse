@@ -30,7 +30,7 @@ namespace StreamVerseApi.Controllers
         public async Task<ApiResponse<Serie>> Create(CreateSerieDto request)
             => await _serieService.CreateAsync(request);
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, Serie updatedSerie)
+        public async Task<ActionResult> Update(int id, CreateSerieDto updatedSerie)
         {
             await _serieService.UpdateAsync(id, updatedSerie);
             return NoContent();

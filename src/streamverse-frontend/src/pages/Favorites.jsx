@@ -22,8 +22,8 @@ function Favorites({ favorites, onRefresh }) {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
           {favorites.map(f => (
             <div key={f.id} style={{ background: '#111', border: '1px solid #333', borderRadius: '12px', padding: '12px' }}>
-              <div style={{ fontSize: '40px', textAlign: 'center', marginBottom: '12px' }}>
-                {f.movieTitle ? '🎬' : '📺'}
+              <div style={{ fontSize: '12px', color: '#888', textAlign: 'center', marginBottom: '12px' }}>
+                {f.movieTitle ? 'Película' : 'Serie'}
               </div>
               <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '8px' }}>
                 {f.movieTitle || f.serieTitle}

@@ -7,18 +7,23 @@ function Genres({ genres, onRefresh }) {
   const [editing, setEditing] = useState(null)
 
   const handleSave = async () => {
+    if (!form.name) {
+      alert('El nombre es obligatorio')
+      return
+    }
     try {
+      const data = { name: form.name, description: form.description || '' }
       if (editing) {
-        await genresApi.update(editing.id, form)
+        await genresApi.update(editing.id, data)
       } else {
-        await genresApi.create(form)
+        await genresApi.create(data)
       }
       setForm({})
       setEditing(null)
       setShowForm(false)
       onRefresh()
     } catch (error) {
-      alert('Error: ' + error.message)
+      alert('Error: ' + JSON.stringify(error.response?.data || error.message))
     }
   }
 
@@ -28,7 +33,7 @@ function Genres({ genres, onRefresh }) {
         await genresApi.delete(id)
         onRefresh()
       } catch (error) {
-        alert('Error: ' + error.message)
+        alert('Error: ' + JSON.stringify(error.response?.data || error.message))
       }
     }
   }
@@ -42,7 +47,7 @@ function Genres({ genres, onRefresh }) {
   return (
     <main style={{ padding: '32px', maxWidth: '800px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h2>📂 Géneros</h2>
+        <h2>Géneros</h2>
         <button onClick={() => { setShowForm(!showForm); setForm({}); setEditing(null) }}
           style={{ background: '#3b82f6', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>
           {showForm ? 'Cancelar' : '+ Agregar'}

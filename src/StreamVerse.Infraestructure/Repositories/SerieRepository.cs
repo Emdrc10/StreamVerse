@@ -51,6 +51,10 @@ namespace StreamVerse.Infraestructure.Repositories
         {
             var serie = await _context.Series.FindAsync(id);
             if (serie == null) return;
+
+            _context.Favorites.RemoveRange(_context.Favorites.Where(f => f.SerieId == id));
+            _context.Ratings.RemoveRange(_context.Ratings.Where(r => r.serieId == id));
+
             _context.Series.Remove(serie);
             await _context.SaveChangesAsync();
         }

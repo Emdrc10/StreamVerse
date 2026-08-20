@@ -10,18 +10,32 @@ function Series({ series, genres, onRefresh }) {
   const filtered = series.filter(s => s.title.toLowerCase().includes(search.toLowerCase()))
 
   const handleSave = async () => {
+    if (!form.title || !form.genreId) {
+      alert('Título y género son obligatorios')
+      return
+    }
     try {
+      const data = {
+        title: form.title,
+        year: Number(form.year) || 0,
+        seasons: Number(form.seasons) || 0,
+        episodes: Number(form.episodes) || 0,
+        synopsis: form.synopsis || '',
+        poster: form.poster || '',
+        genreId: Number(form.genreId)
+      }
+
       if (editing) {
-        await seriesApi.update(editing.id, form)
+        await seriesApi.update(editing.id, data)
       } else {
-        await seriesApi.create(form)
+        await seriesApi.create(data)
       }
       setForm({})
       setEditing(null)
       setShowForm(false)
       onRefresh()
     } catch (error) {
-      alert('Error: ' + error.message)
+      alert('Error: ' + JSON.stringify(error.response?.data || error.message))
     }
   }
 
@@ -31,7 +45,7 @@ function Series({ series, genres, onRefresh }) {
         await seriesApi.delete(id)
         onRefresh()
       } catch (error) {
-        alert('Error: ' + error.message)
+        alert('Error: ' + JSON.stringify(error.response?.data || error.message))
       }
     }
   }
@@ -45,7 +59,7 @@ function Series({ series, genres, onRefresh }) {
   return (
     <main style={{ padding: '32px', maxWidth: '1200px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h2>📺 Series</h2>
+        <h2> Series</h2>
         <button onClick={() => { setShowForm(!showForm); setForm({}); setEditing(null) }}
           style={{ background: '#3b82f6', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>
           {showForm ? 'Cancelar' : '+ Agregar'}
@@ -93,7 +107,13 @@ function Series({ series, genres, onRefresh }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
         {filtered.map(s => (
           <div key={s.id} style={{ background: '#111', border: '1px solid #333', borderRadius: '8px', padding: '12px', cursor: 'pointer' }}>
-            <div style={{ fontSize: '40px', textAlign: 'center', marginBottom: '8px' }}>📺</div>
+            <div style={{ width: '100%', height: '140px', background: '#1a1a2e', borderRadius: '4px', marginBottom: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {s.poster ? (
+                <img src={s.poster} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display = 'none'} />
+              ) : (
+                <div style={{ fontSize: '50px' }}></div>
+              )}
+            </div>
             <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '4px' }}>{s.title}</div>
             <div style={{ fontSize: '12px', color: '#888', marginBottom: '4px' }}>{s.genreName} • {s.year}</div>
             <div style={{ fontSize: '11px', color: '#666', marginBottom: '12px' }}>{s.seasons} temp. • {s.episodes} ep.</div>

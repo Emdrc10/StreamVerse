@@ -42,7 +42,7 @@ function Home({ movies, series, genres, ratings, favorites, onFavorite, onRate }
           Stream<span style={{ color: '#3b82f6', textShadow: '0 0 20px rgba(59, 130, 246, 0.5)' }}>Verse</span>
         </h1>
         <p style={{ fontSize: '20px', color: '#aaa', marginBottom: '40px', zIndex: 1, position: 'relative' }}>
-          ¡Descubre, califica y guarda tus favoritos! 🎬📺
+          ¡Descubre, califica y guarda tus favoritos!
         </p>
         
         <div style={{ display: 'flex', gap: '30px', justifyContent: 'center', flexWrap: 'wrap', zIndex: 1, position: 'relative' }}>
@@ -86,7 +86,7 @@ function Home({ movies, series, genres, ratings, favorites, onFavorite, onRate }
 
       {/* Películas */}
       <div style={{ padding: '0 32px 48px 32px', maxWidth: '1400px', margin: '0 auto' }}>
-        <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '24px' }}>🎬 Películas {selectedGenre && `- ${selectedGenre}`}</h2>
+        <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '24px' }}>Películas {selectedGenre && `- ${selectedGenre}`}</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
           {filteredMovies.map(m => (
             <div key={m.id} 
@@ -95,8 +95,7 @@ function Home({ movies, series, genres, ratings, favorites, onFavorite, onRate }
               onMouseLeave={() => setHoveredMovie(null)}>
               
               <div style={{ height: '140px', background: '#1a1a2e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '50px', position: 'relative', borderBottom: hoveredMovie === m.id ? '3px solid #3b82f6' : 'none' }}>
-                🎬
-                {isFav(m.title) && <span style={{ position: 'absolute', top: 8, right: 8, fontSize: '20px', background: '#111', borderRadius: '50%', padding: '4px' }}>❤️</span>}
+                {isFav(m.title) && <span style={{ position: 'absolute', top: 8, right: 8, fontSize: '11px', fontWeight: 'bold', color: '#fff', background: '#ef4444', borderRadius: '4px', padding: '3px 8px' }}>FAVORITO</span>}
               </div>
               
               <div style={{ padding: '14px' }}>
@@ -104,7 +103,7 @@ function Home({ movies, series, genres, ratings, favorites, onFavorite, onRate }
                 <div style={{ fontSize: '12px', color: '#666', marginBottom: '8px' }}>{m.genreName} • {m.year}</div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                   {getAvg(m.title) ? (
-                    <span style={{ fontSize: '13px', color: '#f59e0b', fontWeight: 'bold' }}>⭐ {getAvg(m.title)}</span>
+                    <span style={{ fontSize: '13px', color: '#f59e0b', fontWeight: 'bold' }}> {getAvg(m.title)}</span>
                   ) : (
                     <span style={{ fontSize: '11px', color: '#555' }}>Sin votos</span>
                   )}
@@ -114,11 +113,11 @@ function Home({ movies, series, genres, ratings, favorites, onFavorite, onRate }
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <button onClick={() => onFavorite(m, 'movie')}
                       style={{ flex: 1, background: isFav(m.title) ? '#ef4444' : '#1a1a1a', color: '#fff', border: '1px solid #333', padding: '8px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>
-                      {isFav(m.title) ? '❤️ Guardar' : '🤍 Guardar'}
+                      {isFav(m.title) ? ' Guardar' : ' Guardar'}
                     </button>
                     <button onClick={() => setRatingModal(m)}
                       style={{ flex: 1, background: '#f59e0b', color: '#000', border: 'none', padding: '8px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>
-                      ⭐ Calificar
+                       Calificar
                     </button>
                   </div>
                 )}
@@ -130,7 +129,7 @@ function Home({ movies, series, genres, ratings, favorites, onFavorite, onRate }
 
       {/* Series */}
       <div style={{ padding: '0 32px 48px 32px', maxWidth: '1400px', margin: '0 auto' }}>
-        <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '24px' }}>📺 Series {selectedGenre && `- ${selectedGenre}`}</h2>
+        <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '24px' }}> Series {selectedGenre && `- ${selectedGenre}`}</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
           {filteredSeries.map(s => (
             <div key={s.id} 
@@ -139,8 +138,8 @@ function Home({ movies, series, genres, ratings, favorites, onFavorite, onRate }
               onMouseLeave={() => setHoveredSerie(null)}>
               
               <div style={{ height: '140px', background: '#1a1a2e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '50px', position: 'relative', borderBottom: hoveredSerie === s.id ? '3px solid #10b981' : 'none' }}>
-                📺
-                {isFav(s.title) && <span style={{ position: 'absolute', top: 8, right: 8, fontSize: '20px', background: '#111', borderRadius: '50%', padding: '4px' }}>❤️</span>}
+                
+                {isFav(s.title) && <span style={{ position: 'absolute', top: 8, right: 8, fontSize: '11px', fontWeight: 'bold', color: '#fff', background: '#ef4444', borderRadius: '4px', padding: '3px 8px' }}>FAVORITO</span>}
               </div>
               
               <div style={{ padding: '14px' }}>
@@ -149,7 +148,7 @@ function Home({ movies, series, genres, ratings, favorites, onFavorite, onRate }
                 <div style={{ fontSize: '11px', color: '#555', marginBottom: '8px' }}>{s.seasons} temp • {s.episodes} ep</div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                   {getAvg(s.title) ? (
-                    <span style={{ fontSize: '13px', color: '#f59e0b', fontWeight: 'bold' }}>⭐ {getAvg(s.title)}</span>
+                    <span style={{ fontSize: '13px', color: '#f59e0b', fontWeight: 'bold' }}> {getAvg(s.title)}</span>
                   ) : (
                     <span style={{ fontSize: '11px', color: '#555' }}>Sin votos</span>
                   )}
@@ -159,11 +158,11 @@ function Home({ movies, series, genres, ratings, favorites, onFavorite, onRate }
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <button onClick={() => onFavorite(s, 'serie')}
                       style={{ flex: 1, background: isFav(s.title) ? '#ef4444' : '#1a1a1a', color: '#fff', border: '1px solid #333', padding: '8px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>
-                      {isFav(s.title) ? '❤️ Guardar' : '🤍 Guardar'}
+                      {isFav(s.title) ? 'Guardar' : ' Guardar'}
                     </button>
                     <button onClick={() => setRatingModal(s)}
                       style={{ flex: 1, background: '#f59e0b', color: '#000', border: 'none', padding: '8px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>
-                      ⭐ Calificar
+                       Calificar
                     </button>
                   </div>
                 )}
