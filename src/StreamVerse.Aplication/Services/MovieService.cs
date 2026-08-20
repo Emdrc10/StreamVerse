@@ -24,7 +24,9 @@ namespace StreamVerse.Application.Services
                 Year = m.Year,
                 Duration = m.Duration,
                 Synopsis = m.Synopsis,
-                GenreName = m.Genre.Name
+                Poster = m.Poster,
+                GenreId = m.GenreId,
+                GenreName = m.Genre != null ? m.Genre.Name : ""
             });
             return ApiResponse<IEnumerable<MovieDto>>.SuccessResponse(result);
         }
@@ -40,7 +42,9 @@ namespace StreamVerse.Application.Services
                 Year = movie.Year,
                 Duration = movie.Duration,
                 Synopsis = movie.Synopsis,
-                GenreName = movie.Genre.Name
+                Poster = movie.Poster,
+                GenreId = movie.GenreId,
+                GenreName = movie.Genre != null ? movie.Genre.Name : ""
             });
         }
 
@@ -48,11 +52,11 @@ namespace StreamVerse.Application.Services
         {
             var movie = new Movie
             {
-                Title = request.Title,
+                Title = request.Title ?? "",
                 Year = request.Year,
                 Duration = request.Duration,
-                Synopsis = request.Synopsis,
-                Poster = request.Poster,
+                Synopsis = request.Synopsis ?? "",
+                Poster = request.Poster ?? "",
                 GenreId = request.GenreId,
                 Created = DateTime.UtcNow.ToString(),
                 Updated = DateTime.UtcNow.ToString()
@@ -62,9 +66,18 @@ namespace StreamVerse.Application.Services
             return ApiResponse<Movie>.SuccessResponse(movie, 201);
         }
 
-        public async Task UpdateAsync(int id, Movie updatedMovie)
+        public async Task UpdateAsync(int id, CreateMovieDto request)
         {
-            await _unitOfWork.Movie.UpdateAsync(id, updatedMovie);
+            var movie = new Movie
+            {
+                Title = request.Title ?? "",
+                Year = request.Year,
+                Duration = request.Duration,
+                Synopsis = request.Synopsis ?? "",
+                Poster = request.Poster ?? "",
+                GenreId = request.GenreId
+            };
+            await _unitOfWork.Movie.UpdateAsync(id, movie);
             _unitOfWork.complete();
         }
 
@@ -91,7 +104,9 @@ namespace StreamVerse.Application.Services
                 Year = m.Year,
                 Duration = m.Duration,
                 Synopsis = m.Synopsis,
-                GenreName = m.Genre?.Name
+                Poster = m.Poster,
+                GenreId = m.GenreId,
+                GenreName = m.Genre != null ? m.Genre.Name : ""
             });
 
             return ApiResponse<IEnumerable<MovieDto>>.SuccessResponse(result);

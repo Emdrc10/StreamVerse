@@ -38,12 +38,18 @@ namespace StreamVerse.Infraestructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             var genre = await _context.Genres.FindAsync(id);
-            if (genre == null) return;
+            if (genre == null) return false;
+
+            var enUso = await _context.Movies.AnyAsync(m => m.GenreId == id)
+                     || await _context.Series.AnyAsync(s => s.GenreId == id);
+            if (enUso) return false;
+
             _context.Genres.Remove(genre);
             await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

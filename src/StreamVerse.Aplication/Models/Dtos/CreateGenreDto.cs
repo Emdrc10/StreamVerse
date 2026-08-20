@@ -1,9 +1,9 @@
-﻿namespace StreamVerse.Aplication.Models.Dtos
+namespace StreamVerse.Aplication.Models.Dtos
 {
     public class CreateGenreDto
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
 
     }
 }

@@ -33,7 +33,7 @@ namespace StreamVerseApi.Controllers
           => await _genreService.CreateAsync(request);
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, Genre updatedGenre)
+        public async Task<ActionResult> Update(int id, CreateGenreDto updatedGenre)
         {
             await _genreService.UpdateAsync(id, updatedGenre);
             return NoContent();
@@ -42,7 +42,9 @@ namespace StreamVerseApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            await _genreService.DeleteAsync(id);
+            var deleted = await _genreService.DeleteAsync(id);
+            if (!deleted)
+                return BadRequest("No se puede eliminar el género porque tiene películas o series asociadas.");
             return NoContent();
         }
     }

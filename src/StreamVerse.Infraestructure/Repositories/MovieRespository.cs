@@ -43,6 +43,7 @@ namespace StreamVerse.Infraestructure.Repositories
             movie.Synopsis = updatedMovie.Synopsis;
             movie.Poster = updatedMovie.Poster;
             movie.GenreId = updatedMovie.GenreId;
+            movie.Updated = DateTime.UtcNow.ToString();
             await _context.SaveChangesAsync();
         }
 
@@ -50,6 +51,10 @@ namespace StreamVerse.Infraestructure.Repositories
         {
             var movie = await _context.Movies.FindAsync(id);
             if (movie == null) return;
+
+            _context.Favorites.RemoveRange(_context.Favorites.Where(f => f.MovieId == id));
+            _context.Ratings.RemoveRange(_context.Ratings.Where(r => r.movieId == id));
+
             _context.Movies.Remove(movie);
             await _context.SaveChangesAsync();
         }
