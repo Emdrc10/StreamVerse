@@ -1,6 +1,6 @@
-﻿namespace StreamVerseApi.Models.Entities
+﻿namespace StreamVerse.Aplication.Models.Dtos
 {
-    public class Genre
+    public class GenreDto
     {
         public int Id { get; set; }
         public string Name { get; set; }

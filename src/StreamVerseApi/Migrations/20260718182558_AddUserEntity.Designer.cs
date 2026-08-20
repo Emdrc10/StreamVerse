@@ -11,8 +11,8 @@ using StreamVerse.Infraestructure;
 namespace StreamVerseApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260613213522_Init")]
-    partial class Init
+    [Migration("20260718182558_AddUserEntity")]
+    partial class AddUserEntity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace StreamVerseApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("StreamVerseApi.Models.Entities.Genre", b =>
+            modelBuilder.Entity("StreamVerse.Domain.Entities.Genre", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -45,7 +45,7 @@ namespace StreamVerseApi.Migrations
                     b.ToTable("Genres");
                 });
 
-            modelBuilder.Entity("StreamVerseApi.Models.Entities.Movie", b =>
+            modelBuilder.Entity("StreamVerse.Domain.Entities.Movie", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -89,7 +89,7 @@ namespace StreamVerseApi.Migrations
                     b.ToTable("Movies");
                 });
 
-            modelBuilder.Entity("StreamVerseApi.Models.Entities.Serie", b =>
+            modelBuilder.Entity("StreamVerse.Domain.Entities.Serie", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -136,9 +136,38 @@ namespace StreamVerseApi.Migrations
                     b.ToTable("Series");
                 });
 
-            modelBuilder.Entity("StreamVerseApi.Models.Entities.Movie", b =>
+            modelBuilder.Entity("StreamVerse.Domain.Entities.User", b =>
                 {
-                    b.HasOne("StreamVerseApi.Models.Entities.Genre", "Genre")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Created")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Updated")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("StreamVerse.Domain.Entities.Movie", b =>
+                {
+                    b.HasOne("StreamVerse.Domain.Entities.Genre", "Genre")
                         .WithMany()
                         .HasForeignKey("GenreId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -147,9 +176,9 @@ namespace StreamVerseApi.Migrations
                     b.Navigation("Genre");
                 });
 
-            modelBuilder.Entity("StreamVerseApi.Models.Entities.Serie", b =>
+            modelBuilder.Entity("StreamVerse.Domain.Entities.Serie", b =>
                 {
-                    b.HasOne("StreamVerseApi.Models.Entities.Genre", "Genre")
+                    b.HasOne("StreamVerse.Domain.Entities.Genre", "Genre")
                         .WithMany()
                         .HasForeignKey("GenreId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using StreamVerseApi.Models.Entities;
+﻿using Microsoft.EntityFrameworkCore;    
+using StreamVerse.Domain.Entities;
 
-namespace StreamVerseApi.Data
+namespace StreamVerse.Infraestructure
 {
     public class DataContext : DbContext
     {
@@ -11,5 +11,11 @@ namespace StreamVerseApi.Data
         public DbSet<Movie> Movies{ get; set; }
         public DbSet<Serie> Series { get; set; }
         public DbSet<Genre> Genres { get; set; }
+
+        public DbSet<User> Users { get; set; }
+
+        public DbSet<Rating> Ratings { get; set; }
+
+        public DbSet<Favorite> Favorites{ get; set; }
     }
 }

@@ -1,109 +1,50 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using StreamVerseApi.Data;
-using StreamVerseApi.Models.Dtos;
-using StreamVerseApi.Models.Entities;
+using StreamVerse.Aplication.Models.Dtos;
+using StreamVerse.Aplication.Models.Responses;
+using StreamVerse.Application.Services;
+using StreamVerse.Domain.Entities;
+using StreamVerse.Infraestructure;
+using StreamVerse.Infraestructure.Repositories;
 
 namespace StreamVerseApi.Controllers
 {
-    [ApiController]
-    [Route("api/[Controller]")]
-    public class SerieController : ControllerBase
+    public class SerieController : BaseController
     {
-        private readonly DataContext _context;
+        private readonly SerieService _serieService;
 
-        public SerieController(DataContext context)
+        public SerieController(SerieService serieService)
         {
-            _context = context;
+            _serieService = serieService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SerieDto>>> GetAll()
-        {
-            var series = await _context.Series
-                .Include(s => s.Genre)
-                .Select(s => new SerieDto
-                {
-                    Id = s.Id,
-                    Title = s.Title,
-                    Year = s.Year,
-                    Seasons = s.Seasons,
-                    Episodes = s.Episodes,
-                    Synopsis = s.Synopsis,
-                    GenreName = s.Genre.Name
-                })
-                .ToListAsync();
-
-            return Ok(series);
-        }
+        public async Task<ApiResponse<IEnumerable<SerieDto>>> GetAll()
+             => await _serieService.GetAllAsync();
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<SerieDto>> GetById(int id)
-        {
-            var serie = await _context.Series
-                .Include(s => s.Genre)
-                .Where(s => s.Id == id)
-                .Select(s => new SerieDto
-                {
-                    Id = s.Id,
-                    Title = s.Title,
-                    Year = s.Year,
-                    Seasons = s.Seasons,
-                    Episodes = s.Episodes,
-                    Synopsis = s.Synopsis,
-                    GenreName = s.Genre.Name
-                })
-                .FirstOrDefaultAsync();
-
-            if (serie == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(serie);
-        }
+        public async Task<ApiResponse<SerieDto>> GetById(int id)
+            => await _serieService.GetByIdAsync(id);
 
         [HttpPost]
-        public async Task<ActionResult<Serie>> Create(Serie serie)
-        {
-            serie.Created = DateTime.UtcNow.ToString();
-            serie.Updated = DateTime.UtcNow.ToString();
-            _context.Series.Add(serie);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = serie.Id }, serie);
-        }
-
+        public async Task<ApiResponse<Serie>> Create(CreateSerieDto request)
+            => await _serieService.CreateAsync(request);
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, Serie updatedSerie)
+        public async Task<ActionResult> Update(int id, CreateSerieDto updatedSerie)
         {
-            var serie = await _context.Series.FindAsync(id);
-            if (serie == null)
-            {
-                return NotFound();
-            }
-            serie.Title = updatedSerie.Title;
-            serie.Year = updatedSerie.Year;
-            serie.Seasons = updatedSerie.Seasons;
-            serie.Episodes = updatedSerie.Episodes;
-            serie.Synopsis = updatedSerie.Synopsis;
-            serie.Poster = updatedSerie.Poster;
-            serie.GenreId = updatedSerie.GenreId;
-            serie.Updated = DateTime.UtcNow.ToString();
-            await _context.SaveChangesAsync();
+            await _serieService.UpdateAsync(id, updatedSerie);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var serie = await _context.Series.FindAsync(id);
-            if (serie == null)
-            {
-                return NotFound();
-            }
-            _context.Series.Remove(serie);
-            await _context.SaveChangesAsync();
+            await _serieService.DeleteAsync(id);
             return NoContent();
         }
+
+        [HttpGet("search")]
+        public async Task<ApiResponse<IEnumerable<SerieDto>>> Search([FromQuery] string? title, [FromQuery] int? genreId)
+        => await _serieService.SearchAsync(title, genreId);
     }
 }
